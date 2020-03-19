@@ -26,8 +26,8 @@ SELECT * FROM annotated_person_info
 -- Select state, total people, 4k TV's, smartphones, highest and average incomes and percent of male respondents
 -- Joins annotated_person_info on two subqueries to calculate only males and total respondents by state
 -- Groups on state, total males and total respondents
-SELECT api.State_Name, COUNT(*) AS 'Total_People', SUM(own_4k_tv) AS 'Total_4K_TVs', SUM(own_smartphone) AS 'Total_Smartphones',
-	   MAX(income) AS 'Highest_Income', AVG(income) AS 'Average_Income', (m.male * 100 / t.total) AS 'Male_Respondents_Percent'
+SELECT api.State_Name, COUNT(*) AS 'Total_People', SUM(api.own_4k_tv) AS 'Total_4K_TVs', SUM(api.own_smartphone) AS 'Total_Smartphones',
+	   MAX(api.income) AS 'Highest_Income', AVG(api.income) AS 'Average_Income', (m.male * 100 / t.total) AS 'Male_Respondents_Percent'
 FROM annotated_person_info api
 JOIN (SELECT State_Name, COUNT(gender) AS 'male'
 	   FROM annotated_person_info 
@@ -45,8 +45,8 @@ GROUP BY api.State_Name, m.male, t.total
 -- Select state, total people, 4k TV's, smartphones, highest and average incomes and percent of male respondents
 -- Joins annotated_person_info on two subqueries to calculate only males and total respondents by state
 -- Groups on state, gender, total males and total respondents
-SELECT api.State_Name,api.gender, COUNT(*) AS 'Total_People', SUM(own_4k_tv) AS 'Total_4K_TVs', SUM(own_smartphone) AS 'Total_Smartphones',
-	   MAX(income) AS 'Highest_Income', AVG(income) AS 'Average_Income', (m.male * 100 / t.total) AS 'Male_Respondents_Percent'
+SELECT api.State_Name,api.gender, COUNT(*) AS 'Total_People', SUM(api.own_4k_tv) AS 'Total_4K_TVs', SUM(api.own_smartphone) AS 'Total_Smartphones',
+	   MAX(api.income) AS 'Highest_Income', AVG(api.income) AS 'Average_Income', (m.male * 100 / t.total) AS 'Male_Respondents_Percent'
 FROM annotated_person_info api
 JOIN (SELECT State_Name, COUNT(gender) AS 'male'
 	   FROM annotated_person_info 
@@ -61,3 +61,16 @@ GROUP BY api.State_Name, m.male, t.total, api.gender
 ORDER BY State_Name
 
 -- 4.
+-- Uses a sub query to perform the calculations then reference the total respondents with the RANK function
+-- returns ranking by total number of respondends, state name, total number of respondends, smart phones and average income
+SELECT
+RANK() OVER (ORDER BY sub.Total_Respondents DESC) AS 'Rank',
+sub.State_Name, sub.Total_Respondents, sub.Total_Smartphones, sub.Average_Income
+FROM (
+SELECT State_Name,
+COUNT(gender) AS 'Total_Respondents',
+SUM(own_smartphone) AS 'Total_Smartphones',
+AVG(income) AS 'Average_Income'
+FROM annotated_person_info
+GROUP BY State_Name
+) AS sub
