@@ -61,16 +61,31 @@ GROUP BY api.State_Name, m.male, t.total, api.gender
 ORDER BY State_Name
 
 -- 4.
--- Uses a sub query to perform the calculations then reference the total respondents with the RANK function
--- returns ranking by total number of respondends, state name, total number of respondends, smart phones and average income
+-- Uses a subquery to perform the calculations then reference the total respondents with the RANK function
+-- returns ranking by total number of respondents, state name, total number of respondents, smart phones and average income
 SELECT
 RANK() OVER (ORDER BY sub.Total_Respondents DESC) AS 'Rank',
 sub.State_Name, sub.Total_Respondents, sub.Total_Smartphones, sub.Average_Income
 FROM (
 SELECT State_Name,
-COUNT(gender) AS 'Total_Respondents',
+COUNT(*) AS 'Total_Respondents',
 SUM(own_smartphone) AS 'Total_Smartphones',
 AVG(income) AS 'Average_Income'
 FROM annotated_person_info
 GROUP BY State_Name
 ) AS sub
+
+-- 5.
+-- Uses a CTE instead of a subquery and row number instead of rank
+WITH totalRepondents AS (
+SELECT State_Name,
+COUNT(*) AS 'Total_Respondents',
+SUM(own_smartphone) AS 'Total_Smartphones',
+AVG(income) AS 'Average_Income'
+FROM annotated_person_info
+GROUP BY State_Name 
+)
+SELECT ROW_NUMBER() OVER (ORDER BY Total_Respondents DESC) AS 'Rank',
+	   State_Name, Total_Respondents, Total_Smartphones, Average_Income
+FROM totalRepondents
+ORDER BY Total_Respondents DESC
