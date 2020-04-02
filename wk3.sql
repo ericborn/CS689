@@ -18,3 +18,6 @@ Fog BIT,
 Snow BIT,
 Thunder BIT
 );
+
+SELECT TOP 10 * FROM Dim_Ship;
+SELECT TOP 10 * FROM Fact_Trip;
