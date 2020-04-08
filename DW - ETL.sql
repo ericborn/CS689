@@ -28,8 +28,8 @@ INTO distributor
 FROM (SELECT DISTINCT REPORTER_NAME, REPORTER_ADDRESS1, REPORTER_CITY, REPORTER_STATE, REPORTER_ZIP, REPORTER_COUNTY
 	  FROM Opioids.dbo.arcos) ar;
 
--- Code to setup the distributor table within the warehouse
---DROP SEQUENCE distributor_key
+-- Code to setup the buyer table within the warehouse
+--DROP SEQUENCE buyer_key
 CREATE SEQUENCE buyer_key
 START WITH 10
 INCREMENT BY 1;
@@ -38,5 +38,18 @@ SELECT NEXT VALUE FOR buyer_key AS buyer_key,
 ar.BUYER_NAME AS 'buyer_name', ar.BUYER_ADDRESS1 AS 'buyer_address', 
 ar.BUYER_CITY AS 'buyer_city', ar.BUYER_STATE AS 'buyer_state', ar.BUYER_ZIP AS 'buyer_zip', ar.BUYER_COUNTY AS 'buyer_county'
 INTO buyer
-FROM (SELECT DISTINCT REPORTER_NAME, REPORTER_ADDRESS1, REPORTER_CITY, REPORTER_STATE, REPORTER_ZIP, REPORTER_COUNTY
+FROM (SELECT DISTINCT BUYER_NAME, BUYER_ADDRESS1, BUYER_CITY, BUYER_STATE, BUYER_ZIP, BUYER_COUNTY
 	  FROM Opioids.dbo.arcos) ar;
+
+-- Code to setup the drug table within the warehouse
+--DROP SEQUENCE drug_key
+CREATE SEQUENCE drug_key
+START WITH 1
+INCREMENT BY 1;
+
+SELECT NEXT VALUE FOR drug_key AS drug_key, 
+ar.DRUG_NAME AS 'drug_name'
+INTO drug
+FROM (SELECT DISTINCT DRUG_NAME
+	  FROM Opioids.dbo.arcos) ar;
+
