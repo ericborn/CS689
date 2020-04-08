@@ -53,3 +53,14 @@ INTO drug
 FROM (SELECT DISTINCT DRUG_NAME
 	  FROM Opioids.dbo.arcos) ar;
 
+-- Code to setup the relabeler table within the warehouse
+--DROP SEQUENCE relabeler_key
+CREATE SEQUENCE relabeler_key
+START WITH 1
+INCREMENT BY 1;
+
+SELECT NEXT VALUE FOR relabeler_key AS relabeler_key, 
+ar.combined_labeler_name AS 'relabeler_name'
+INTO relabeler
+FROM (SELECT DISTINCT combined_labeler_name
+	  FROM Opioids.dbo.arcos) ar;
