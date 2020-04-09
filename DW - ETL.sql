@@ -65,10 +65,21 @@ INTO relabeler
 FROM (SELECT DISTINCT combined_labeler_name
 	  FROM Opioids.dbo.arcos) ar;
 
--- Created an index to help with reading data from the arcos table
+-- Created indexes to help with reading data from the arcos table
+-- reporter name and address
 USE Opioids
 CREATE NONCLUSTERED INDEX indx_1 ON dbo.arcos
 ([reporter_name], [reporter_address1]) include ([buyer_name], [buyer_address1], [drug_name],[quantity], [transaction_Date], [Combined_Labeler_Name]);
+
+-- transaction date
+USE Opioids
+CREATE NONCLUSTERED INDEX indx_Date ON dbo.arcos
+(transaction_date) include ([buyer_name], [buyer_address1], [drug_name],[quantity], [reporter_name], [reporter_address1], [Combined_Labeler_Name]);
+
+-- combined labeler name
+USE Opioids
+CREATE NONCLUSTERED INDEX indx_labeler ON dbo.arcos
+([Combined_Labeler_Name]) include ([buyer_name], [buyer_address1], [drug_name],[quantity], [transaction_Date], [reporter_name], [reporter_address1]);
 
 -- function found on stack overflow for identifying non-numeric values when trying to convert between varchar and float
 -- https://stackoverflow.com/questions/8085015/error-converting-varchar-to-float
@@ -152,3 +163,6 @@ FROM relabeler
 
 SELECT TOP 10 *
 FROM time_period
+
+SELECT TOP 10 *
+FROM transactions
