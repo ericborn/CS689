@@ -125,10 +125,10 @@ WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 -- Also converts using RIGHT AND LEFT to transform the arcos data format from MMDDYYYY to YYYYMMDD
 USE Opioids_DW;
 
-SELECT top 10 t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key,
-ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'Avg_Qty', SUM(CAST(ar.quantity AS FLOAT)) AS 'Sum_QTY',
-ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'Avg_Dose', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'Sum_Dose',
-ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Avg_Grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Sum_Grams'
+SELECT t.Month, t.Year, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(buyer_key) AS 'Total_Transactions',
+ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'Average_Quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'Total_Quantity',
+ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'Average_Doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'Total_Doses',
+ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Average_Grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Total_Grams'
 INTO Opioids_DW.dbo.transactions
 FROM Opioids.dbo.arcos ar
 INNER JOIN Opioids_DW.dbo.time_period t ON CONVERT(DATE,CONVERT(VARCHAR(8),t.date_key,112)) = CONVERT(DATE,(RIGHT(transaction_date,4)+LEFT(transaction_date,4)),112)
@@ -136,8 +136,7 @@ INNER JOIN Opioids_DW.dbo.distributor di ON di.distributor_name = ar.REPORTER_NA
 INNER JOIN Opioids_DW.dbo.buyer b ON b.buyer_name = ar.BUYER_NAME AND b.buyer_address = ar.BUYER_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug dr ON dr.drug_name = ar.DRUG_NAME
 INNER JOIN Opioids_DW.dbo.relabeler r ON r.relabeler_name = ar.Combined_Labeler_Name
-GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
-
+GROUP BY t.Month, t.Year, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
 SELECT TOP 10 *
 FROM buyer
