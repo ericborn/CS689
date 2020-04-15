@@ -4,12 +4,12 @@ This script will build out a time_period table which contains month, month name,
 Original script create by Mubin M. Shaikh
 from https://www.codeproject.com/Articles/647950/Create-and-Populate-Date-Dimension-for-Data-Wareho
 */
-
+select * from [time_period]
 -- set the query to use the data warehouse database
 USE Opioids_DW
 
 BEGIN TRY
-	DROP TABLE [dbo].[time_period_test]
+	DROP TABLE [dbo].[time_period]
 END TRY
 
 BEGIN CATCH
@@ -18,8 +18,9 @@ END CATCH
 
 /**********************************************************************************/
 
-CREATE TABLE	[dbo].[time_period_test]
-	(	[Date_key] INT PRIMARY KEY, 
+CREATE TABLE	[dbo].[time_period]
+	(	
+		[Date_key] INT PRIMARY KEY, 
 		[Month] VARCHAR(2), --Number of the Month 1 to 12
 		[MonthName] VARCHAR(9),--January, February etc
 		[Quarter] CHAR(1),
@@ -49,7 +50,7 @@ BEGIN
  
 /* Populate Your Dimension Table with values*/
 	
-	INSERT INTO [dbo].[time_period_test]
+	INSERT INTO [dbo].[time_period]
 	SELECT
 		NEXT VALUE FOR date_key AS date_key, 
 		DATEPART(MM, @CurrentDate) AS Month,
@@ -59,6 +60,8 @@ BEGIN
 	SET @CurrentDate = DATEADD(MM, 1, @CurrentDate)
 END
 
+-- Update months 1-9 with a 0 to the left
+UPDATE [time_period]
+SET Month = (SELECT LEFT('0',1)+month)
+WHERE Month <= 9
 /********************************************************************************************/
-
-SELECT * FROM [dbo].[time_period_test]
