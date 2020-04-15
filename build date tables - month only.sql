@@ -4,7 +4,7 @@ This script will build out a time_period table which contains month, month name,
 Original script create by Mubin M. Shaikh
 from https://www.codeproject.com/Articles/647950/Create-and-Populate-Date-Dimension-for-Data-Wareho
 */
-select * from [time_period]
+--select * from [time_period]
 -- set the query to use the data warehouse database
 USE Opioids_DW
 
@@ -14,7 +14,7 @@ END TRY
 
 BEGIN CATCH
 	/*No Action*/
-END CATCH
+END CATCH;
 
 /**********************************************************************************/
 
@@ -33,13 +33,23 @@ GO
 -- Create start and end year and current date value
 DECLARE @StartYear DATE = '01/01/2006',
 		@EndYear DATE = '01/01/2015',
-		@CurrentDate DATE = '01/01/2006'
+		@CurrentDate DATE = '01/01/2006';
 
 -- set current date = to start year
-SET @CurrentDate = @StartYear
+SET @CurrentDate = @StartYear;
 
 /********************************************************************************************/
 --Proceed only if Start Date(Current date ) is less than End date you specified above
+BEGIN TRY
+	DROP SEQUENCE date_key
+END TRY
+
+BEGIN CATCH
+	/*No Action*/
+END CATCH;
+
+
+
 
 CREATE SEQUENCE date_key
 START WITH 1
@@ -64,4 +74,6 @@ END
 UPDATE [time_period]
 SET Month = (SELECT LEFT('0',1)+month)
 WHERE Month <= 9
+
+select * from [time_period]
 /********************************************************************************************/
