@@ -126,7 +126,7 @@ SET quantity = 999
 WHERE dbo.isReallyNumeric(quantity) = 0;
 
 UPDATE Opioids.dbo.arcos
-SET CALC_BASE_WT_IN_GM = 999
+SET CALC_BASE_WT_IN_GM = 0
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 
 --DROP TABLE orders
@@ -149,7 +149,8 @@ USE Opioids_DW;
 --INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
 --GROUP BY t.Month, t.Year, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
--- Table build with only records with buying state = MA
+-- Table build with only records where buying state = MA, excludes dosage_unit and quantity of 999 and CALC_BASE_WT_IN_GM of 0
+--DROP TABLE transactions_ma_fact
 SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(buyer_key) AS 'Total_transactions_fact',
 ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'Average_Quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'Total_Quantity',
 ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'Average_Doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'Total_Doses',
@@ -161,7 +162,7 @@ INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTE
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
 INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE b.buyer_state = 'MA'
+WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
 GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
 SELECT TOP 10 *
