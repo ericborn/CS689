@@ -126,7 +126,7 @@ SET quantity = 999
 WHERE dbo.isReallyNumeric(quantity) = 0;
 
 UPDATE Opioids.dbo.arcos
-SET CALC_BASE_WT_IN_GM = 0
+SET CALC_BASE_WT_IN_GM = 999
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 
 --DROP TABLE orders
@@ -149,23 +149,20 @@ USE Opioids_DW;
 --INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
 --GROUP BY t.Month, t.Year, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
--- Table build for only California
-SELECT TOP 1 t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(buyer_key) AS 'Total_transactions_fact',
+-- Table build with only records with buying state = MA
+SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(buyer_key) AS 'Total_transactions_fact',
 ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'Average_Quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'Total_Quantity',
 ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'Average_Doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'Total_Doses',
 ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Average_Grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'Total_Grams'
---INTO Opioids_DW.dbo.transactions_fact
+INTO Opioids_DW.dbo.transactions_ma_fact
 FROM Opioids.dbo.arcos ar
-INNER JOIN Opioids_DW.dbo.time_period_test t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
+INNER JOIN Opioids_DW.dbo.time_period t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
 INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND di.distributor_address = ar.REPORTER_ADDRESS1
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
 INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE b.buyer_state = 'ak'
+WHERE b.buyer_state = 'MA'
 GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
-
-SELECT TOP 10 * --RIGHT(transaction_Date,4), left(transaction_Date,2) 
-from opioids.dbo.arcos
 
 SELECT TOP 10 *
 FROM buyer_dim
@@ -179,8 +176,14 @@ FROM drug_dim
 SELECT TOP 10 *
 FROM relabeler_dim
 
-SELECT TOP 10 *
+SELECT *
 FROM time_period
 
 SELECT TOP 10 *
-FROM transactions_fact
+FROM transactions_ma_fact
+
+-----------------------------
+-- null value for a county with the zipcode of 02401
+UPDATE buyer_dim
+SET buyer_county = 'Plymouth'
+WHERE buyer_zip = 02401
