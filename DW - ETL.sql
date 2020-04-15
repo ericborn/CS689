@@ -183,7 +183,11 @@ SELECT TOP 10 *
 FROM transactions_ma_fact
 
 -----------------------------
--- null value for a county with the zipcode of 02401
+-- null value for a county with the zipcode of 02401 and 02174
 UPDATE buyer_dim
 SET buyer_county = 'Plymouth'
 WHERE buyer_zip = 02401
+
+UPDATE buyer_dim
+SET buyer_county = 'Middlesex'
+WHERE buyer_zip = 02174
