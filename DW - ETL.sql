@@ -15,13 +15,13 @@ END;
 
 --ALTER TABLE distributor_dim
 --ADD
---current_row_indicator BIT,
+--current_row_indicator INT,
 --row_effective_date DATE,
 --row_expiration_date DATE;
 
 --ALTER TABLE buyer_dim
 --ADD
---current_row_indicator BIT,
+--current_row_indicator INT,
 --row_effective_date DATE,
 --row_expiration_date DATE;
 
@@ -155,6 +155,21 @@ WHERE dbo.isReallyNumeric(quantity) = 0;
 UPDATE Opioids.dbo.arcos
 SET CALC_BASE_WT_IN_GM = 0
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
+
+-- insert fake distributor address changes
+INSERT INTO distributor_dim
+SELECT dd.distributor_key, dd.distributor_type, dd.distributor_name, dau.distributor_address, 
+dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', 2, '2008-02-11', '2099-12-31'
+FROM distributor_address dau
+JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key
+
+-- update distributor county based on zipcode from uszips table
+-- uszips table downloaded from here: https://simplemaps.com/data/us-zips
+UPDATE distributor_dim
+SET distributor_dim.distributor_county = u.county_name
+FROM distributor_dim
+JOIN uszips u ON u.zip = distributor_dim.distributor_zip
+
 
 --DROP TABLE orders
 -- Gathers the initial data from the Opioids database and insert it into a table called transactions_fact in the Opioids_DW database
