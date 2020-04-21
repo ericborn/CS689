@@ -226,7 +226,15 @@ SELECT TOP 10 *
 FROM transactions_ma_fact
 
 -----------------------------
--- null value for a county with the zipcode of 02401 and 02174
+
+-- Updates blank counties using values in the uszips database
+UPDATE distributor_dim
+SET distributor_dim.distributor_county = u.county_name
+FROM distributor_dim d
+JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
+WHERE d.distributor_county = ''
+
+-- null value for a county with the zipcode of 02401, 02174, 66225, 10131 AND 10260
 UPDATE buyer_dim
 SET buyer_county = 'Plymouth'
 WHERE buyer_zip = 02401
@@ -234,3 +242,11 @@ WHERE buyer_zip = 02401
 UPDATE buyer_dim
 SET buyer_county = 'Middlesex'
 WHERE buyer_zip = 02174
+
+UPDATE distributor_dim
+SET distributor_dim.distributor_county = 'Johnson'
+WHERE distributor_zip = 66225
+
+UPDATE distributor_dim
+SET distributor_dim.distributor_county = 'New York'
+WHERE distributor_zip IN (10131, 10260)
