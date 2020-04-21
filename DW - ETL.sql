@@ -48,8 +48,7 @@ INCREMENT BY 1;
 -- DROP TABLE distributor_dim
 SELECT NEXT VALUE FOR distributor_key AS distributor_key, ar.REPORTER_BUS_ACT AS 'distributor_type', ar.REPORTER_NAME AS 'distributor_name',
 ar.REPORTER_ADDRESS1 AS 'distributor_address', ar.REPORTER_CITY AS 'distributor_city', ar.REPORTER_STATE AS 'distributor_state', 
-ar.REPORTER_ZIP AS 'distributor_zip', ar.REPORTER_COUNTY AS 'distributor_county', 1 AS 'current_row_indicator', '20040101' AS 'row_effective_date',
-'20991231' AS 'row_expiration_date'
+ar.REPORTER_ZIP AS 'distributor_zip', ar.REPORTER_COUNTY AS 'distributor_county', '20040101' AS 'effective_date', 'Y' AS 'current_flag'
 INTO distributor_dim
 FROM (SELECT DISTINCT REPORTER_BUS_ACT, REPORTER_NAME, REPORTER_ADDRESS1, REPORTER_CITY, REPORTER_STATE, REPORTER_ZIP, REPORTER_COUNTY
 	  FROM Opioids.dbo.arcos) ar;
@@ -156,19 +155,41 @@ UPDATE Opioids.dbo.arcos
 SET CALC_BASE_WT_IN_GM = 0
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 
--- insert fake distributor address changes
+-- Insert fake distributor address changes
 INSERT INTO distributor_dim
-SELECT dd.distributor_key, dd.distributor_type, dd.distributor_name, dau.distributor_address, 
-dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', 2, '2008-02-11', '2099-12-31'
+SELECT NEXT VALUE FOR distributor_key AS distributor_key,
+dd.distributor_type, dd.distributor_name, dau.distributor_address, 
+dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', '20080211', 'Y'
+FROM distributor_address dau
+JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key;
+
+-- set old records to not current
+UPDATE distributor_dim
+SET current_flag = 'N'
 FROM distributor_address dau
 JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key
+WHERE effective_date = '20040101'
 
 -- update distributor county based on zipcode from uszips table
 -- uszips table downloaded from here: https://simplemaps.com/data/us-zips
 UPDATE distributor_dim
 SET distributor_dim.distributor_county = u.county_name
-FROM distributor_dim
-JOIN uszips u ON u.zip = distributor_dim.distributor_zip
+FROM distributor_dim d
+JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
+WHERE d.distributor_county = ''
+
+-- null value for a county with the zipcode of 02401, 02174, 66225, 10131 AND 10260
+UPDATE buyer_dim
+SET buyer_county = 'Plymouth'
+WHERE buyer_zip = 02401
+
+UPDATE buyer_dim
+SET buyer_county = 'Middlesex'
+WHERE buyer_zip = 02174
+
+UPDATE distributor_dim
+SET distributor_dim.distributor_county = 'New York'
+WHERE distributor_zip = 10115
 
 
 --DROP TABLE orders
@@ -192,6 +213,7 @@ USE Opioids_DW;
 --GROUP BY t.Month, t.Year, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
 -- Table build with only records where buying state = MA, excludes dosage_unit and quantity of 999 and CALC_BASE_WT_IN_GM of 0
+-- filters distributors with current_flag set to Y
 --DROP TABLE transactions_ma_fact
 SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(buyer_key) AS 'total_transactions',
 ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_pill_quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_pill_quantity',
@@ -200,7 +222,7 @@ ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM
 INTO Opioids_DW.dbo.transactions_ma_fact
 FROM Opioids.dbo.arcos ar
 INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
-INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND di.distributor_address = ar.REPORTER_ADDRESS1
+INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND di.current_flag = 'Y'
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
 INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
@@ -210,7 +232,7 @@ GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
 SELECT TOP 10 *
 FROM buyer_dim
 
-SELECT TOP 10 *
+SELECT TOP 100 *
 FROM distributor_dim
 
 SELECT TOP 10 *
@@ -226,27 +248,3 @@ SELECT TOP 10 *
 FROM transactions_ma_fact
 
 -----------------------------
-
--- Updates blank counties using values in the uszips database
-UPDATE distributor_dim
-SET distributor_dim.distributor_county = u.county_name
-FROM distributor_dim d
-JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
-WHERE d.distributor_county = ''
-
--- null value for a county with the zipcode of 02401, 02174, 66225, 10131 AND 10260
-UPDATE buyer_dim
-SET buyer_county = 'Plymouth'
-WHERE buyer_zip = 02401
-
-UPDATE buyer_dim
-SET buyer_county = 'Middlesex'
-WHERE buyer_zip = 02174
-
-UPDATE distributor_dim
-SET distributor_dim.distributor_county = 'Johnson'
-WHERE distributor_zip = 66225
-
-UPDATE distributor_dim
-SET distributor_dim.distributor_county = 'New York'
-WHERE distributor_zip IN (10131, 10260)
