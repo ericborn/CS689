@@ -13,6 +13,30 @@ BEGIN
     SELECT 'Olist_DW database has been created'
 END;
 
+--ALTER TABLE distributor_dim
+--ADD
+--current_row_indicator BIT,
+--row_effective_date DATE,
+--row_expiration_date DATE;
+
+--ALTER TABLE buyer_dim
+--ADD
+--current_row_indicator BIT,
+--row_effective_date DATE,
+--row_expiration_date DATE;
+
+--UPDATE distributor_dim
+--SET 
+--current_row_indicator = 1,
+--row_effective_date = '20040101',
+--row_expiration_date = '20991231'
+
+--UPDATE buyer_dim
+--SET 
+--current_row_indicator = 1,
+--row_effective_date = '20040101',
+--row_expiration_date = '20991231'
+
 USE Opioids_DW;
 
 -- Code to setup the distributor_dim table within the warehouse
@@ -24,7 +48,8 @@ INCREMENT BY 1;
 -- DROP TABLE distributor_dim
 SELECT NEXT VALUE FOR distributor_key AS distributor_key, ar.REPORTER_BUS_ACT AS 'distributor_type', ar.REPORTER_NAME AS 'distributor_name',
 ar.REPORTER_ADDRESS1 AS 'distributor_address', ar.REPORTER_CITY AS 'distributor_city', ar.REPORTER_STATE AS 'distributor_state', 
-ar.REPORTER_ZIP AS 'distributor_zip', ar.REPORTER_COUNTY AS 'distributor_county'
+ar.REPORTER_ZIP AS 'distributor_zip', ar.REPORTER_COUNTY AS 'distributor_county', 1 AS 'current_row_indicator', '20040101' AS 'row_effective_date',
+'20991231' AS 'row_expiration_date'
 INTO distributor_dim
 FROM (SELECT DISTINCT REPORTER_BUS_ACT, REPORTER_NAME, REPORTER_ADDRESS1, REPORTER_CITY, REPORTER_STATE, REPORTER_ZIP, REPORTER_COUNTY
 	  FROM Opioids.dbo.arcos) ar;
@@ -37,7 +62,8 @@ INCREMENT BY 1;
 
 -- DROP TABLE buyer_dim
 SELECT NEXT VALUE FOR buyer_key AS buyer_key, ar.BUYER_BUS_ACT AS 'buyer_type', ar.BUYER_NAME AS 'buyer_name', ar.BUYER_ADDRESS1 AS 'buyer_address', 
-ar.BUYER_CITY AS 'buyer_city', ar.BUYER_STATE AS 'buyer_state', ar.BUYER_ZIP AS 'buyer_zip', ar.BUYER_COUNTY AS 'buyer_county'
+ar.BUYER_CITY AS 'buyer_city', ar.BUYER_STATE AS 'buyer_state', ar.BUYER_ZIP AS 'buyer_zip', ar.BUYER_COUNTY AS 'buyer_county', 
+1 AS 'current_row_indicator', '20040101' AS 'row_effective_date', '20991231' AS 'row_expiration_date'
 INTO buyer_dim
 FROM (SELECT DISTINCT BUYER_BUS_ACT, BUYER_NAME, BUYER_ADDRESS1, BUYER_CITY, BUYER_STATE, BUYER_ZIP, BUYER_COUNTY
 	  FROM Opioids.dbo.arcos) ar;
