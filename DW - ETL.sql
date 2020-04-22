@@ -1,3 +1,8 @@
+SELECT *
+INTO arcos
+FROM arcos_full
+WHERE BUYER_STATE = 'ma'
+
 -- DW Creation and ETL Code
 IF EXISTS 
    (
@@ -227,7 +232,7 @@ INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTE
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
 INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
+WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0' AND ar.transaction_Date < '20150101'
 GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
 SELECT TOP 10 *
