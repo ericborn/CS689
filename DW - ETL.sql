@@ -235,6 +235,9 @@ INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labe
 WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0' AND ar.transaction_Date < '20150101'
 GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key;
 
+SELECT TOP 100 transaction_Date
+FROM Opioids.dbo.arcos 
+
 SELECT TOP 10 *
 FROM buyer_dim
 
@@ -252,8 +255,14 @@ FROM time_period_dim
 
 SELECT TOP 10 *
 FROM transactions_ma_fact
+order by date_key
 -----------------------------
+--Delete fake data from the opioids database
+--DELETE FROM Opioids.dbo.arcos
+--WHERE RIGHT(transaction_Date,4) LIKE '%2015'
+
 -- Create fake data to insert into original opioids database to test ETL
+-- !!!TODO!!! USE BUILD DATE TABLE WHILE LOOP TO BUILD THIS DATA WITH ITERATIVE DATES
 INSERT INTO Opioids.dbo.arcos
 VALUES
 ('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
@@ -294,4 +303,53 @@ VALUES
 ('PA0006836','DISTRIBUTOR', 'BURLINGTON DRUG COMPANY', 'NULL', '91 CATAMOUNT DR', 'NULL', 'MILTON', 'VT', '5468', 'CHITTENDEN', 'AA3181891', 'RETAIL PHARMACY', 
 'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
 'null', 'null', '06242015', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
+'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5'),
+
+('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
+'TABRIZI, HAMID R DMD', 'NULL', '389 MAIN STREET, SUITE 404', 'NULL', 'MALDEN', 'MA', '2148', 'MIDDLESEX', 'S', '9193', '00406036301', 'HYDROCODONE', '1.0', 'null', 
+'null', 'null', 'null', 'null', '12211015', '0.6054', '100.0', '64', 'HYDROCODONE BIT/ACETA 10MG/500MG USP', 'HYDROCODONE BITARTRATE HEMIPENTAHYDRATE', 'TAB', '1.0', 
+'SpecGx LLC', 'Mallinckrodt', 'ACE Surgical Supply Co Inc', '10.0'),
+
+('PA0006836','DISTRIBUTOR', 'BURLINGTON DRUG COMPANY', 'NULL', '91 CATAMOUNT DR', 'NULL', 'MILTON', 'VT', '5468', 'CHITTENDEN', 'AA3181891', 'RETAIL PHARMACY', 
+'AUCELLA DRUG', 'NULL', '705 SALEM STREET', 'NULL', 'MALDEN', 'MA', '2148', 'MIDDLESEX', 'S', '9143', '59011010710', 'OXYCODONE', '12.0', 'null', 'null', 'null', 
+'null', 'null', '03112015', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
+'Purdue Pharma LP', 'Burlington Drug Company', '80.0'),
+
+('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
+'BILLS PHCY OF GT BARRINGTON', 'NULL', '362 MAIN ST, SUITE 2', 'NULL', 'GREAT BARRINGTON', 'MA', '1230', 'MIDDLESEX', 'S', '9193', '00406036301', 'HYDROCODONE', '1.0', 'null', 
+'null', 'null', 'null', 'null', '01302015', '2.27025', '500.0', '801001226', 'HYDROCODONE.BITARTRATE 7.5MG/APAP 75', 'HYDROCODONE BITARTRATE HEMIPENTAHYDRATE', 'TAB', '1.0', 
+'Amneal Pharmaceuticals LLC', 'Amneal Pharmaceuticals, Inc.', 'Burlington Drug Company', '10.0'),
+
+('PA0006836','DISTRIBUTOR', 'BURLINGTON DRUG COMPANY', 'NULL', '91 CATAMOUNT DR', 'NULL', 'MILTON', 'VT', '5468', 'CHITTENDEN', 'AA3181891', 'RETAIL PHARMACY', 
+'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
+'null', 'null', '11022015', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
+'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5'),
+
+('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
+'TABRIZI, HAMID R DMD', 'NULL', '389 MAIN STREET, SUITE 404', 'NULL', 'MALDEN', 'MA', '2148', 'MIDDLESEX', 'S', '9193', '00406036301', 'HYDROCODONE', '1.0', 'null', 
+'null', 'null', 'null', 'null', '02162015', '0.6054', '100.0', '64', 'HYDROCODONE BIT/ACETA 10MG/500MG USP', 'HYDROCODONE BITARTRATE HEMIPENTAHYDRATE', 'TAB', '1.0', 
+'SpecGx LLC', 'Mallinckrodt', 'ACE Surgical Supply Co Inc', '10.0'),
+
+('PA0006836','DISTRIBUTOR', 'BURLINGTON DRUG COMPANY', 'NULL', '91 CATAMOUNT DR', 'NULL', 'MILTON', 'VT', '5468', 'CHITTENDEN', 'AA3181891', 'RETAIL PHARMACY', 
+'AUCELLA DRUG', 'NULL', '705 SALEM STREET', 'NULL', 'MALDEN', 'MA', '2148', 'MIDDLESEX', 'S', '9143', '59011010710', 'OXYCODONE', '12.0', 'null', 'null', 'null', 
+'null', 'null', '01102015', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
+'Purdue Pharma LP', 'Burlington Drug Company', '80.0'),
+
+('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
+'BILLS PHCY OF GT BARRINGTON', 'NULL', '362 MAIN ST, SUITE 2', 'NULL', 'GREAT BARRINGTON', 'MA', '1230', 'MIDDLESEX', 'S', '9193', '00406036301', 'HYDROCODONE', '1.0', 'null', 
+'null', 'null', 'null', 'null', '10122015', '2.27025', '500.0', '801001226', 'HYDROCODONE.BITARTRATE 7.5MG/APAP 75', 'HYDROCODONE BITARTRATE HEMIPENTAHYDRATE', 'TAB', '1.0', 
+'Amneal Pharmaceuticals LLC', 'Amneal Pharmaceuticals, Inc.', 'Burlington Drug Company', '10.0'),
+
+('PA0006836','DISTRIBUTOR', 'BURLINGTON DRUG COMPANY', 'NULL', '91 CATAMOUNT DR', 'NULL', 'MILTON', 'VT', '5468', 'CHITTENDEN', 'AA3181891', 'RETAIL PHARMACY', 
+'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
+'null', 'null', '06122015', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
 'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5')
+
+
+
+SELECT * FROM time_period_dim
+
+SELECT * 
+FROM [dbo].[transactions_ma_fact] tmf
+JOIN time_period_dim tpd ON tpd.Date_key = tmf.date_key
+WHERE Year = 2015
