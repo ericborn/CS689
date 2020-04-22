@@ -9,7 +9,7 @@ from https://www.codeproject.com/Articles/647950/Create-and-Populate-Date-Dimens
 USE Opioids_DW
 
 BEGIN TRY
-	DROP TABLE [dbo].[time_period]
+	DROP TABLE [dbo].[time_period_dim]
 END TRY
 
 BEGIN CATCH
@@ -18,7 +18,7 @@ END CATCH;
 
 /**********************************************************************************/
 
-CREATE TABLE	[dbo].[time_period]
+CREATE TABLE	[dbo].[time_period_dim]
 	(	
 		[Date_key] INT PRIMARY KEY, 
 		[Month] VARCHAR(2), --Number of the Month 1 to 12
@@ -32,7 +32,7 @@ GO
 
 -- Create start and end year and current date value
 DECLARE @StartYear DATE = '01/01/2006',
-		@EndYear DATE = '01/01/2015',
+		@EndYear DATE = '01/01/2016',
 		@CurrentDate DATE = '01/01/2006';
 
 -- set current date = to start year
@@ -60,7 +60,7 @@ BEGIN
  
 /* Populate Your Dimension Table with values*/
 	
-	INSERT INTO [dbo].[time_period]
+	INSERT INTO [dbo].[time_period_dim]
 	SELECT
 		NEXT VALUE FOR date_key AS date_key, 
 		DATEPART(MM, @CurrentDate) AS Month,
@@ -71,9 +71,9 @@ BEGIN
 END
 
 -- Update months 1-9 with a 0 to the left
-UPDATE [time_period]
+UPDATE [time_period_dim]
 SET Month = (SELECT LEFT('0',1)+month)
 WHERE Month <= 9
 
-select * from [time_period]
+select * from [time_period_dim]
 /********************************************************************************************/
