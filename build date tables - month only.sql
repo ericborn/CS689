@@ -21,10 +21,10 @@ END CATCH;
 CREATE TABLE	[dbo].[time_period_dim]
 	(	
 		[Date_key] INT PRIMARY KEY, 
-		[Month] VARCHAR(2), --Number of the Month 1 to 12
+		[Month] INT, --Number of the Month 1 to 12
 		[MonthName] VARCHAR(9),--January, February etc
-		[Quarter] CHAR(1),
-		[Year] CHAR(4),-- Year value of Date stored in Row
+		[Quarter] INT,
+		[Year] INT,-- Year value of Date stored in Row
 	)
 GO
 
@@ -32,7 +32,7 @@ GO
 
 -- Create start and end year and current date value
 DECLARE @StartYear DATE = '01/01/2006',
-		@EndYear DATE = '01/01/2016',
+		@EndYear DATE = '01/01/2015',
 		@CurrentDate DATE = '01/01/2006';
 
 -- set current date = to start year
