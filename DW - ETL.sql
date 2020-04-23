@@ -103,13 +103,115 @@ START WITH 1
 INCREMENT BY 1;
 
 -- table holds county name and population
-SELECT NEXT VALUE FOR county_dim_key AS county_key,
-bd.buyer_county, bd.population
-INTO county_dim
-FROM (SELECT DISTINCT buyer_county, SUM(CAST(u.population AS INT)) AS 'population'
-	  FROM [buyer_dim] bd
-	  INNER JOIN uszips u ON u.county_name = bd.buyer_county
-	  GROUP BY buyer_county) bd
+CREATE TABLE county_pop_dim
+(
+county_pop_key INT,
+county_name VARCHAR(50),
+[year] INT,
+[population] INT
+)
+
+INSERT INTO county_pop_dim
+VALUES
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2006,546353),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2007,547380),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2008,548713),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2009,549743),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2010,549177),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2011,549308),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2012,551120),
+(NEXT VALUE FOR county_dim_key, 'BRISTOL',2013,552379),
+
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2006, 15552),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2007, 15667),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2008, 15847),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2009, 16051),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2010, 16572),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2011, 16697),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2012, 16829),
+(NEXT VALUE FOR county_dim_key, 'DUKES', 2013, 17159),
+
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2006,735261),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2007,737283),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2008,741781),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2009,747196),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2010,745479),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2011,751507),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2012,757338),
+(NEXT VALUE FOR county_dim_key, 'ESSEX',2013,764563),
+
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2006,72132),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2007,72047),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2008,72080),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2009,71937),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2010,71366),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2011,71692),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2012,71687),
+(NEXT VALUE FOR county_dim_key,	 'FRANKLIN',2013,71361),
+
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2006,461786),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2007,461794),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2008,462301),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2009,462847),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2010,464256),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2011,466171),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2012,466955),
+(NEXT VALUE FOR county_dim_key,	'HAMPDEN',2013,467747),
+
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2006,155365),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2007,155883),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2008,156460),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2009,156582),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2010,159320),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2011,160154),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2012,160419),
+(NEXT VALUE FOR county_dim_key,	'HAMPSHIRE',2013,160856),
+
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2006,1464000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2007,1472000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2008,1487000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2009,1506000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2010,1508000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2011,1525000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2012,1543000),
+(NEXT VALUE FOR county_dim_key,	'MIDDLESEX',2013,1560000),
+
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2006,10400),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2007,10598),
+(NEXT VALUE FOR county_dim_key, 'NANTUCKET',2008,10794),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2009,10857),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2010,10167),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2011,10130),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2012,10311),
+(NEXT VALUE FOR county_dim_key,	'NANTUCKET',2013,10567),
+
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2006,656303),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2007,659793),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2008,665197),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2009,669990),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2010,673039),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2011,677782),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2012,682865),
+(NEXT VALUE FOR county_dim_key,	'NORFOLK',2013,552379),
+
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2006,491697),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2007,493891),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2008,496695),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2009,499749),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2010,495930),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2011,498184),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2012,499495),
+(NEXT VALUE FOR county_dim_key,	'SUFFOLK',2013,502792),
+
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2006,785445),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2007,788179),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2008,790569),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2009,794718),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2010,800401),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2011,804063),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2012,806942),
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2013,810846)
+
 
 -- Created indexes to help with reading data from the arcos table
 -- reporter name and address
