@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="1"
-  DTS:VersionGUID="{58DE1337-6F93-4127-A93A-FF5461236E03}">
+  DTS:VersionBuild="6"
+  DTS:VersionGUID="{088E9DF6-B107-4D34-B74B-90A93930D556}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -157,14 +157,18 @@
                   expressionType="Notify"
                   name="SqlCommand"
                   UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT DISTINCT Date_key
-FROM            time_period_dim</property>
+ 
+
+FROM transactions_ma_fact</property>
                 <property
                   dataType="System.String"
                   description="Specifies a SQL statement that uses parameters to generate the lookup table."
                   expressionType="Notify"
                   name="SqlCommandParam"
                   UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (SELECT DISTINCT Date_key
-FROM            time_period_dim) [refTable]
+ 
+
+FROM transactions_ma_fact) [refTable]
 where [refTable].[Date_key] = ?</property>
                 <property
                   dataType="System.Int32"
@@ -201,7 +205,7 @@ where [refTable].[Date_key] = ?</property>
                   containsID="true"
                   dataType="System.String"
                   description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
-                  name="ParameterMap">#{Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[Date_key]};</property>
+                  name="ParameterMap">#{Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[date_key]};</property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -225,10 +229,10 @@ where [refTable].[Date_key] = ?</property>
                   name="Lookup Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\Extract Transaction Data\Lookup.Inputs[Lookup Input].Columns[Date_key]"
+                      refId="Package\Extract Transaction Data\Lookup.Inputs[Lookup Input].Columns[date_key]"
                       cachedDataType="i4"
-                      cachedName="Date_key"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[Date_key]">
+                      cachedName="date_key"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[date_key]">
                       <properties>
                         <property
                           dataType="System.String"
@@ -393,41 +397,11 @@ where [refTable].[Date_key] = ?</property>
                       externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[drug_key]"
                       lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[drug_key]" />
                     <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[relabeler_key]"
-                      cachedDataType="i8"
-                      cachedName="relabeler_key"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[relabeler_key]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[relabeler_key]" />
-                    <inputColumn
                       refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[total_transactions]"
                       cachedDataType="i4"
                       cachedName="total_transactions"
                       externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_transactions]"
                       lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_transactions]" />
-                    <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[average_pill_quantity]"
-                      cachedDataType="r8"
-                      cachedName="average_pill_quantity"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_pill_quantity]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pill_quantity]" />
-                    <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[total_pill_quantity]"
-                      cachedDataType="r8"
-                      cachedName="total_pill_quantity"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_pill_quantity]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pill_quantity]" />
-                    <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[average_doses]"
-                      cachedDataType="r8"
-                      cachedName="average_doses"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_doses]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_doses]" />
-                    <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[total_doses]"
-                      cachedDataType="r8"
-                      cachedName="total_doses"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_doses]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_doses]" />
                     <inputColumn
                       refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[average_grams]"
                       cachedDataType="r8"
@@ -441,11 +415,35 @@ where [refTable].[Date_key] = ?</property>
                       externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_grams]"
                       lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_grams]" />
                     <inputColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[Date_key]"
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[date_key]"
                       cachedDataType="i4"
-                      cachedName="Date_key"
+                      cachedName="date_key"
                       externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[date_key]"
-                      lineageId="Package\Extract Transaction Data\Lookup.Outputs[Lookup Match Output].Columns[Date_key]" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[date_key]" />
+                    <inputColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[average_boxes]"
+                      cachedDataType="r8"
+                      cachedName="average_boxes"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_boxes]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_boxes]" />
+                    <inputColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[total_boxes]"
+                      cachedDataType="r8"
+                      cachedName="total_boxes"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_boxes]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_boxes]" />
+                    <inputColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[average_pills]"
+                      cachedDataType="r8"
+                      cachedName="average_pills"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_pills]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pills]" />
+                    <inputColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].Columns[total_pills]"
+                      cachedDataType="r8"
+                      cachedName="total_pills"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_pills]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pills]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -466,29 +464,9 @@ where [refTable].[Date_key] = ?</property>
                       dataType="i8"
                       name="drug_key" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[relabeler_key]"
-                      dataType="i8"
-                      name="relabeler_key" />
-                    <externalMetadataColumn
                       refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_transactions]"
                       dataType="i4"
                       name="total_transactions" />
-                    <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_pill_quantity]"
-                      dataType="r8"
-                      name="average_pill_quantity" />
-                    <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_pill_quantity]"
-                      dataType="r8"
-                      name="total_pill_quantity" />
-                    <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_doses]"
-                      dataType="r8"
-                      name="average_doses" />
-                    <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_doses]"
-                      dataType="r8"
-                      name="total_doses" />
                     <externalMetadataColumn
                       refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_grams]"
                       dataType="r8"
@@ -497,6 +475,22 @@ where [refTable].[Date_key] = ?</property>
                       refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_grams]"
                       dataType="r8"
                       name="total_grams" />
+                    <externalMetadataColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_boxes]"
+                      dataType="r8"
+                      name="average_boxes" />
+                    <externalMetadataColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_boxes]"
+                      dataType="r8"
+                      name="total_boxes" />
+                    <externalMetadataColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[average_pills]"
+                      dataType="r8"
+                      name="average_pills" />
+                    <externalMetadataColumn
+                      refId="Package\Extract Transaction Data\Opioids_DW_In.Inputs[OLE DB Destination Input].ExternalColumns[total_pills]"
+                      dataType="r8"
+                      name="total_pills" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -550,17 +544,19 @@ where [refTable].[Date_key] = ?</property>
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT        t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key, COUNT(b.buyer_key) AS 'total_transactions', ROUND(AVG(CAST(ar.QUANTITY AS FLOAT)), 3) AS 'average_pill_quantity', 
-                         SUM(CAST(ar.QUANTITY AS FLOAT)) AS 'total_pill_quantity', ROUND(AVG(CAST(ar.DOSAGE_UNIT AS FLOAT)), 3) AS 'average_doses', SUM(CAST(ar.DOSAGE_UNIT AS FLOAT)) AS 'total_doses', 
-                         ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)), 3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)), 3) AS 'total_grams'
-FROM            arcos AS ar INNER JOIN
-                         Opioids_DW.dbo.time_period_dim AS t ON t.[Year] = RIGHT(ar.TRANSACTION_DATE, 4) AND t.[Month] = LEFT(ar.TRANSACTION_DATE, 2) INNER JOIN
-                         Opioids_DW.dbo.distributor_dim AS di ON di.distributor_name = ar.REPORTER_NAME AND di.current_flag = 'Y' INNER JOIN
-                         Opioids_DW.dbo.buyer_dim AS b ON b.buyer_name = ar.BUYER_NAME AND b.buyer_address = ar.BUYER_ADDRESS1 INNER JOIN
-                         Opioids_DW.dbo.drug_dim AS dr ON dr.drug_name = ar.DRUG_NAME INNER JOIN
-                         Opioids_DW.dbo.relabeler_dim AS r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE        (b.buyer_state = 'MA') AND (ar.DOSAGE_UNIT &lt;&gt; '999') AND (ar.QUANTITY &lt;&gt; '999') AND (ar.CALC_BASE_WT_IN_GM &lt;&gt; '0')
-GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_key</property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT DISTINCT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, COUNT(buyer_key) AS 'total_transactions', 
+ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_boxes', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_boxes',
+ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_pills', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_pills',
+ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
+FROM Opioids.dbo.arcos ar
+INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
+INNER JOIN Opioids_DW.dbo.distributor_dim di ON ar.REPORTER_ADDRESS1 = di.distributor_address 
+AND ar.REPORTER_CITY = di.distributor_city AND ar.REPORTER_ZIP = di.distributor_zip
+INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_address = ar.buyer_ADDRESS1 AND b.buyer_city = ar.BUYER_CITY
+AND b.buyer_zip = ar.BUYER_ZIP AND b.buyer_dea_num = ar.BUYER_DEA_NO
+INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
+WHERE dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
+GROUP BY t.date_key, dr.drug_key, di.distributor_key, b.buyer_key;</property>
                 <property
                   dataType="System.String"
                   description="The variable that contains the SQL command to be executed."
@@ -597,13 +593,13 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                   name="OLE DB Source Output">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[Date_key]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[date_key]"
                       dataType="i4"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[Date_key]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[Date_key]"
-                      name="Date_key"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[date_key]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[date_key]"
+                      name="date_key"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[distributor_key]"
@@ -633,15 +629,6 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                       name="drug_key"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[relabeler_key]"
-                      dataType="i8"
-                      errorOrTruncationOperation="Conversion"
-                      errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[relabeler_key]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[relabeler_key]"
-                      name="relabeler_key"
-                      truncationRowDisposition="FailComponent" />
-                    <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_transactions]"
                       dataType="i4"
                       errorOrTruncationOperation="Conversion"
@@ -651,40 +638,40 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                       name="total_transactions"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_boxes]"
                       dataType="r8"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_pill_quantity]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pill_quantity]"
-                      name="average_pill_quantity"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_boxes]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_boxes]"
+                      name="average_boxes"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_boxes]"
                       dataType="r8"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_pill_quantity]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pill_quantity]"
-                      name="total_pill_quantity"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_boxes]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_boxes]"
+                      name="total_boxes"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pills]"
                       dataType="r8"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_doses]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_doses]"
-                      name="average_doses"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_pills]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_pills]"
+                      name="average_pills"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pills]"
                       dataType="r8"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_doses]"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_doses]"
-                      name="total_doses"
+                      externalMetadataColumnId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_pills]"
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[total_pills]"
+                      name="total_pills"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].Columns[average_grams]"
@@ -708,9 +695,9 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[Date_key]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[date_key]"
                       dataType="i4"
-                      name="Date_key" />
+                      name="date_key" />
                     <externalMetadataColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[distributor_key]"
                       dataType="i8"
@@ -724,29 +711,25 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                       dataType="i8"
                       name="drug_key" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[relabeler_key]"
-                      dataType="i8"
-                      name="relabeler_key" />
-                    <externalMetadataColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_transactions]"
                       dataType="i4"
                       name="total_transactions" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_boxes]"
                       dataType="r8"
-                      name="average_pill_quantity" />
+                      name="average_boxes" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_boxes]"
                       dataType="r8"
-                      name="total_pill_quantity" />
+                      name="total_boxes" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_pills]"
                       dataType="r8"
-                      name="average_doses" />
+                      name="average_pills" />
                     <externalMetadataColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[total_pills]"
                       dataType="r8"
-                      name="total_doses" />
+                      name="total_pills" />
                     <externalMetadataColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Output].ExternalColumns[average_grams]"
                       dataType="r8"
@@ -763,10 +746,10 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                   name="OLE DB Source Error Output">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[Date_key]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[date_key]"
                       dataType="i4"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[Date_key]"
-                      name="Date_key" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[date_key]"
+                      name="date_key" />
                     <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[distributor_key]"
                       dataType="i8"
@@ -783,35 +766,30 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
                       lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[drug_key]"
                       name="drug_key" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[relabeler_key]"
-                      dataType="i8"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[relabeler_key]"
-                      name="relabeler_key" />
-                    <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_transactions]"
                       dataType="i4"
                       lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_transactions]"
                       name="total_transactions" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_boxes]"
                       dataType="r8"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_pill_quantity]"
-                      name="average_pill_quantity" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_boxes]"
+                      name="average_boxes" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_pill_quantity]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_boxes]"
                       dataType="r8"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_pill_quantity]"
-                      name="total_pill_quantity" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_boxes]"
+                      name="total_boxes" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_pills]"
                       dataType="r8"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_doses]"
-                      name="average_doses" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_pills]"
+                      name="average_pills" />
                     <outputColumn
-                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_doses]"
+                      refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_pills]"
                       dataType="r8"
-                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_doses]"
-                      name="total_doses" />
+                      lineageId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[total_pills]"
+                      name="total_pills" />
                     <outputColumn
                       refId="Package\Extract Transaction Data\Opioids_Transactions_Out.Outputs[OLE DB Source Error Output].Columns[average_grams]"
                       dataType="r8"
@@ -860,7 +838,34 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
         </pipeline>
       </DTS:ObjectData>
     </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Update null counties"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{5C9B953C-4EBA-42D8-BC2A-F43AB6A1E1A9}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Update null counties"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{9002C288-11A4-4DD9-A68F-70868ED05DDD}"
+          SQLTask:SqlStatementSource="UPDATE       buyer_dim&#xA;SET                buyer_county = 'Plymouth'&#xA;WHERE        buyer_zip = 02401;&#xA;UPDATE       buyer_dim&#xA;SET                 buyer_county = 'Middlesex'&#xA;WHERE        buyer_zip = 02174;&#xA;UPDATE       distributor_dim&#xA;SET                 distributor_dim.distributor_county = 'New York'&#xA;WHERE        distributor_zip = 10115;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
   </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{3B65F4A6-6F5C-4DB8-9ACA-AB44399F9B0C}"
+      DTS:From="Package\Extract Transaction Data"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Update null counties" />
+  </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
 <!--If you manually edit this section and make a mistake, you can delete it. -->
@@ -872,11 +877,37 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="200,42"
           Id="Package\Extract Transaction Data"
           TopLeft="374,228" />
+        <NodeLayout
+          Size="179,42"
+          Id="Package\Update null counties"
+          TopLeft="382,325" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="472.75,270">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,55"
+              Start="0,0"
+              End="0,47.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,47.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </Package>
@@ -885,6 +916,14 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
     <LayoutInfo>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="156,42"
+          Id="Package\Extract Transaction Data\Opioids_DW_In"
+          TopLeft="447,389" />
+        <NodeLayout
+          Size="159,42"
+          Id="Package\Extract Transaction Data\Conditional Split"
+          TopLeft="445,283" />
         <NodeLayout
           Size="209,42"
           Id="Package\Extract Transaction Data\Opioids_Transactions_Out"
@@ -915,10 +954,6 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="159,42"
-          Id="Package\Extract Transaction Data\Conditional Split"
-          TopLeft="445,283" />
         <EdgeLayout
           Id="Package\Extract Transaction Data.Paths[Lookup Match Output]"
           TopLeft="526,213">
@@ -943,10 +978,6 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="156,42"
-          Id="Package\Extract Transaction Data\Opioids_DW_In"
-          TopLeft="447,389" />
         <EdgeLayout
           Id="Package\Extract Transaction Data.Paths[INSERT]"
           TopLeft="524.75,325">
@@ -975,6 +1006,19 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
+    design-time-name="Package\Extract Transaction Data\Opioids_DW_In">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
     design-time-name="Package\Extract Transaction Data\Opioids_Transactions_Out">
     <Properties>
       <Property>
@@ -1002,19 +1046,6 @@ GROUP BY t.Date_key, di.distributor_key, b.buyer_key, dr.drug_key, r.relabeler_k
       </Property>
       <Property>
         <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\Extract Transaction Data\Opioids_DW_In">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
