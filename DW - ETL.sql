@@ -340,22 +340,18 @@ USE Opioids_DW;
 -- filters distributors with current_flag set to Y
 -- Approx 25 seconds to build
 --DROP TABLE transactions_ma_fact
-SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key,COUNT(buyer_key) AS 'total_transactions', 
---t.Month, left(ar.transaction_Date,2) AS 'AR month', t.Year, RIGHT(ar.transaction_Date,4) AS 'AR year',
+SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, COUNT(buyer_key) AS 'total_transactions', 
 ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_pill_quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_pill_quantity',
-dosage_unit, quantity, 
-ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_doses'
---ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
+ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_doses',
+ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
 INTO Opioids_DW.dbo.transactions_ma_fact
 FROM Opioids.dbo.arcos ar
 INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
-INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND di.current_flag = 'Y'
+INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND ar.REPORTER_ADDRESS1 = di.distributor_address
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
---INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
-GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, quantity, dosage_unit
-ORDER BY buyer_key
+WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0' AND REPORTER_DEA_NO = 'RA0290724'
+GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key
 
 SELECT TOP 100 transaction_Date
 FROM Opioids.dbo.arcos 
