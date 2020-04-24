@@ -1,14 +1,43 @@
---DROP INDEX IF EXISTS cal_mfr_1 ON calendar_manufacture_dim;
---CREATE INDEX cal_mfr_1 ON calendar_manufacture_dim (manufacture_yearmonth) INCLUDE (manufacture_cal_key);
+-- Week 6 assignment
+-- eborn
+-- CS 689
 
---DROP INDEX IF EXISTS cal_mfr_2 ON calendar_manufacture_dim;
---CREATE INDEX cal_mfr_2 ON calendar_manufacture_dim (manufacture_cal_key) INCLUDE (manufacture_yearmonth);
-
-DROP INDEX IF EXISTS supply_1 ON supply_fact;
+-- 4.1.1
+DROP INDEX IF EXISTS cal_mfr_1 ON calendar_manufacture_dim;
 CREATE INDEX cal_mfr_1 ON calendar_manufacture_dim (manufacture_yearmonth) INCLUDE (manufacture_cal_key);
 
-DROP INDEX IF EXISTS supply_2 ON supply_fact;
+-- 4.1.2
+DROP INDEX IF EXISTS cal_mfr_2 ON calendar_manufacture_dim;
 CREATE INDEX cal_mfr_2 ON calendar_manufacture_dim (manufacture_cal_key) INCLUDE (manufacture_yearmonth);
+
+-- 4.2.1
+DROP INDEX IF EXISTS supply_1 ON supply_fact;
+CREATE INDEX supply_1 ON supply_fact (supply_qty) INCLUDE (manufacture_cal_key);
+
+-- 4.2.2
+DROP INDEX IF EXISTS supply_2 ON supply_fact;
+CREATE INDEX supply_2 ON supply_fact (manufacture_cal_key) INCLUDE (supply_qty);
+
+-- 4.3.1
+DROP INDEX IF EXISTS mfr_fact_1 ON manufacture_fact;
+CREATE INDEX mfr_fact_1 ON manufacture_fact (qty_passed) INCLUDE (manufacture_cal_key);
+
+-- 4.3.2
+DROP INDEX IF EXISTS mfr_fact_2 ON manufacture_fact;
+CREATE INDEX mfr_fact_2 ON manufacture_fact (manufacture_cal_key) INCLUDE (qty_passed);
+
+-- 4.4.1
+DROP INDEX IF EXISTS cal_mfr_2 ON calendar_manufacture_dim;
+DROP INDEX IF EXISTS mfr_fact_2 ON manufacture_fact;
+CREATE INDEX cal_mfr_2 ON calendar_manufacture_dim (manufacture_cal_key) INCLUDE (manufacture_yearmonth);
+CREATE INDEX mfr_fact_2 ON manufacture_fact (manufacture_cal_key) INCLUDE (qty_passed);
+
+-- 4.4.2
+DROP INDEX IF EXISTS supply_2 ON supply_fact;
+DROP INDEX IF EXISTS mfr_fact_2 ON manufacture_fact;
+CREATE INDEX supply_2 ON supply_fact (manufacture_cal_key) INCLUDE (supply_qty);
+CREATE INDEX mfr_fact_2 ON manufacture_fact (manufacture_cal_key) INCLUDE (qty_passed);
+
 
 SELECT *
 FROM
@@ -27,4 +56,3 @@ FROM
       WHERE cal.manufacture_yearmonth = 'mYM201904'
       GROUP BY cal.manufacture_cal_key
    ) agmfg on agsupp.manufacture_cal_key = agmfg.manufacture_cal_key;
-
