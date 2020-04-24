@@ -341,20 +341,20 @@ USE Opioids_DW;
 -- Approx 25 seconds to build
 --DROP TABLE transactions_ma_fact
 SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key,COUNT(buyer_key) AS 'total_transactions', 
---t.Month, left(ar.transaction_Date,2) AS 'AR month', t.Year, RIGHT(ar.transaction_Date,4) AS 'AR year'
+--t.Month, left(ar.transaction_Date,2) AS 'AR month', t.Year, RIGHT(ar.transaction_Date,4) AS 'AR year',
 ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_pill_quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_pill_quantity',
-ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_doses',
-ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
+dosage_unit, quantity, 
+ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_doses'
+--ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
 INTO Opioids_DW.dbo.transactions_ma_fact
 FROM Opioids.dbo.arcos ar
 INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
 INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND di.current_flag = 'Y'
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
-INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
-WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0' --AND (RIGHT(ar.transaction_Date,4)+left(ar.transaction_Date,2)) BETWEEN '20060101' AND '20060201'
---AND date_key IN (1,2) AND distributor_key = 1594
-GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key
+--INNER JOIN Opioids_DW.dbo.relabeler_dim r ON r.relabeler_name = ar.Combined_Labeler_Name
+WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
+GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, quantity, dosage_unit
 ORDER BY buyer_key
 
 SELECT TOP 100 transaction_Date
@@ -478,3 +478,20 @@ VALUES
 'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
 'null', 'null', '01232013', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
 'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5')
+
+
+
+SELECT SUM(total_pill_quantity) AS 'total', [YEAR]
+FROM [dbo].[transactions_ma_fact] tmf
+JOIN [dbo].[time_period_dim] tpd ON tmf.date_key = tpd.Date_key
+JOIN [dbo].[distributor_dim] dd ON dd.distributor_key = tmf.distributor_key
+WHERE dd.distributor_name = 'CARDINAL HEALTH'
+GROUP BY [Year]
+order by [year]
+
+select distinct buyer_county
+from buyer_dim
+order by buyer_county
+
+
+SELECT * FROM [time_period_dim]
