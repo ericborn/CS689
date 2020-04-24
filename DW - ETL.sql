@@ -385,6 +385,37 @@ SET buyer_type = 'PRACTITIONER'
 WHERE buyer_type LIKE 'PRACTITIONER-%'
 
 -----------------------------
+-- Update distributor data with fake addresses from address table
+UPDATE distributor_DIM
+SET distributor_address = a.distributor_address, current_flag = 'N'
+FROM distributor_DIM dd
+JOIN addresses a ON a.distributor_key = dd.distributor_key
+WHERE dd.distributor_key = a.distributor_key
+
+-- Insert real distributor data as changed address
+INSERT INTO distributor_DIM
+VALUES
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'PRICE CHOPPER OPERATING CO INC',	'501 DUANESBURG ROAD', 			 'SCHENECTADY',	'NY', '12306', 'SCHENECTADY',	'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'H D SMITH WHOLESALE DRUG CO',		'410 COMMERCE BLVD UNIT B', 	 'CARLSTADT',	'NJ', '7072',  'BERGEN',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'HENRY SCHEIN, INC',				'41 WEAVER ROAD',				 'DENVER',		'PA', '17517', 'LANCASTER', 	'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERICAN HEALTH SERVICE SALES',	'DBA MED-VET INTERNATIONAL', 	 'METTAWA',		'IL', '60045', 'LAKE',			'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ACTAVIS PHARMA INC.',				'605 TRI-STATE PARKWAY', 		 'GURNEE',		'IL', '60031', 'LAKE',			'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CALIGOR PHYSICIANS & HOSPITAL',	'DBA CALIGOR & ROANE BARKER', 	 'SPARKS',		'NV', '89434', 'WASHOE',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'RITE AID MID-ATLANTIC',			'CUSTOMER SUPPORT CENTER', 		 'ABERDEEN',	'MD', '21001', 'HARFORD',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MIDWEST VETERINARY SUPPLY INC',	'5374 MALY ROAD, RTE 1',		 'SUN PRAIRIE',	'WI', '53590', 'DANE',			'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'THE HARVARD DRUG GROUP-MI',		'FIRST VETERINARY SUPPLY', 		 'LIVONIA',		'MI', '48150', 'WAYNE',			'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERISOURCEBERGEN DRUG CORP.',		'5100 JAINDL BLVD.', 			 'BETHLEHEM',	'PA', '18017', 'NORTHAMPTON',	'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'WALGREEN CO',						'15998 WALGREENS DRIVE', 		 'JUPITER',		'FL', '33478', 'PALM BEACH',	'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'LIFELINE PHARMACEUTICALS LLC',		'1301 NW 84 AVE', 				 'MIAMI',		'FL', '33126', 'MIAMI-DADE',	'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ANDA PHARMACEUTICALS INC',			'6500 ADELAIDE COURT', 			 'GROVEPORT',	'OH', '43125', 'FRANKLIN',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON MEDICAL SURGICAL INC',	'16043 EL PRADO ROAD', 			 'CHINO',		'CA', '91708', 'SAN BERNARDINO','20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'BUTLER ANIMAL HEALTH SUPPLY',		'STOCKROOM 02', 				 'COLUMBUS',	'OH', '43204', 'FRANKLIN',		'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'TOP RX, INC.',						'2950 BROTHER BOULEVARD', 		 'BARTLETT',	'TN', '38133', 'SHELBY',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCGUFF COMPANY',					'3524 WEST LAKE CENTER DRIVE',	 'SANTA ANA', 	'CA', '92704', 'ORANGE',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CARDINAL HEALTH',					'2840 ELM POINT INDUSTRIAL DR.', 'ST CHARLES',	'MO', '63301', 'SAINT CHARLES',	'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON CORPORATION',				'DBA MCKESSON DRUG COMPANY', 	 'LANDOVER', 	'MD', '20785', 'PRINCE GEORGES','20060216', 'Y')
+
+
 --Delete fake data from the opioids database
 --DELETE FROM Opioids.dbo.arcos
 --WHERE RIGHT(transaction_Date,4) = 2015
@@ -393,6 +424,10 @@ WHERE buyer_type LIKE 'PRACTITIONER-%'
 -- 85 is the date key for jan 1 2013
 --DELETE FROM Opioids_DW.dbo.transactions_ma_fact
 --WHERE date_key >= 85
+
+--SELECT * FROM distributor_dim
+--where distributor_name = 'ACE SURGICAL SUPPLY CO INC' or
+-- distributor_name = 'BURLINGTON DRUG COMPANY'
 
 -- Create fake data to insert into original opioids database to test ETL
 -- !!!TODO!!! 
@@ -478,34 +513,3 @@ VALUES
 'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
 'null', 'null', '01232013', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
 'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5')
-
-
--- Update distributor data with fake addresses from address table
-UPDATE distributor_DIM
-SET distributor_address = a.distributor_address, current_flag = 'N'
-FROM distributor_DIM dd
-JOIN addresses a ON a.distributor_key = dd.distributor_key
-WHERE dd.distributor_key = a.distributor_key
-
--- Insert real distributor data as changed address
-INSERT INTO distributor_DIM
-VALUES
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'PRICE CHOPPER OPERATING CO INC',	'501 DUANESBURG ROAD', 			 'SCHENECTADY',	'NY', '12306', 'SCHENECTADY',	'20050716', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'H D SMITH WHOLESALE DRUG CO',		'410 COMMERCE BLVD UNIT B', 	 'CARLSTADT',	'NJ', '7072',  'BERGEN',		'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'HENRY SCHEIN, INC',				'41 WEAVER ROAD',				 'DENVER',		'PA', '17517', 'LANCASTER', 	'20050716', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERICAN HEALTH SERVICE SALES',	'DBA MED-VET INTERNATIONAL', 	 'METTAWA',		'IL', '60045', 'LAKE',			'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ACTAVIS PHARMA INC.',				'605 TRI-STATE PARKWAY', 		 'GURNEE',		'IL', '60031', 'LAKE',			'20050716', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CALIGOR PHYSICIANS & HOSPITAL',	'DBA CALIGOR & ROANE BARKER', 	 'SPARKS',		'NV', '89434', 'WASHOE',		'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'RITE AID MID-ATLANTIC',			'CUSTOMER SUPPORT CENTER', 		 'ABERDEEN',	'MD', '21001', 'HARFORD',		'20080211', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MIDWEST VETERINARY SUPPLY INC',	'5374 MALY ROAD, RTE 1',		 'SUN PRAIRIE',	'WI', '53590', 'DANE',			'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'THE HARVARD DRUG GROUP-MI',		'FIRST VETERINARY SUPPLY', 		 'LIVONIA',		'MI', '48150', 'WAYNE',			'20060216', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERISOURCEBERGEN DRUG CORP.',		'5100 JAINDL BLVD.', 			 'BETHLEHEM',	'PA', '18017', 'NORTHAMPTON',	'20060216', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'WALGREEN CO',						'15998 WALGREENS DRIVE', 		 'JUPITER',		'FL', '33478', 'PALM BEACH',	'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'LIFELINE PHARMACEUTICALS LLC',		'1301 NW 84 AVE', 				 'MIAMI',		'FL', '33126', 'MIAMI-DADE',	'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ANDA PHARMACEUTICALS INC',			'6500 ADELAIDE COURT', 			 'GROVEPORT',	'OH', '43125', 'FRANKLIN',		'20080211', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON MEDICAL SURGICAL INC',	'16043 EL PRADO ROAD', 			 'CHINO',		'CA', '91708', 'SAN BERNARDINO','20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'BUTLER ANIMAL HEALTH SUPPLY',		'STOCKROOM 02', 				 'COLUMBUS',	'OH', '43204', 'FRANKLIN',		'20060216', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'TOP RX, INC.',						'2950 BROTHER BOULEVARD', 		 'BARTLETT',	'TN', '38133', 'SHELBY',		'20080624', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCGUFF COMPANY',					'3524 WEST LAKE CENTER DRIVE',	 'SANTA ANA', 	'CA', '92704', 'ORANGE',		'20080211', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CARDINAL HEALTH',					'2840 ELM POINT INDUSTRIAL DR.', 'ST CHARLES',	'MO', '63301', 'SAINT CHARLES',	'20080211', 'Y'),
-(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON CORPORATION',				'DBA MCKESSON DRUG COMPANY', 	 'LANDOVER', 	'MD', '20785', 'PRINCE GEORGES','20060216', 'Y')
