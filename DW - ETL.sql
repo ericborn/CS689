@@ -286,22 +286,22 @@ WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 --FROM distributor_address dau
 --JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key;
 
--- set old records to not current
-UPDATE distributor_dim
-SET current_flag = 'N'
-FROM distributor_address dau
-JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key
-WHERE effective_date = '20040101'
+---- set old records to not current
+--UPDATE distributor_dim
+--SET current_flag = 'N'
+--FROM distributor_address dau
+--JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key
+--WHERE effective_date = '20040101'
 
--- update distributor county based on zipcode from uszips table
--- uszips table downloaded from here: https://simplemaps.com/data/us-zips
-UPDATE distributor_dim
-SET distributor_dim.distributor_county = u.county_name
-FROM distributor_dim d
-JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
-WHERE d.distributor_county = '';
+---- update distributor county based on zipcode from uszips table
+---- uszips table downloaded from here: https://simplemaps.com/data/us-zips
+--UPDATE distributor_dim
+--SET distributor_dim.distributor_county = u.county_name
+--FROM distributor_dim d
+--JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
+--WHERE d.distributor_county = '';
 
--- null value for a county with the zipcode of 02401, 02174, 66225, 10131 AND 10260
+-- null value for a county with the zipcode of 02401, 02174, 10115
 UPDATE buyer_dim
 SET buyer_county = 'Plymouth'
 WHERE buyer_zip = 02401;
@@ -314,6 +314,8 @@ UPDATE distributor_dim
 SET distributor_dim.distributor_county = 'New York'
 WHERE distributor_zip = 10115;
 
+SELECT * FROM BUYER_DIM
+WHERE BUYER_COUNTY = 'NULL'
 
 --DROP TABLE orders
 -- Gathers the initial data from the Opioids database and insert it into a table called transactions_fact in the Opioids_DW database
@@ -478,18 +480,32 @@ VALUES
 'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5')
 
 
+-- Update distributor data with fake addresses from address table
+UPDATE distributor_DIM
+SET distributor_address = a.distributor_address, current_flag = 'N'
+FROM distributor_DIM dd
+JOIN addresses a ON a.distributor_key = dd.distributor_key
+WHERE dd.distributor_key = a.distributor_key
 
-SELECT SUM(total_pill_quantity) AS 'total', [YEAR]
-FROM [dbo].[transactions_ma_fact] tmf
-JOIN [dbo].[time_period_dim] tpd ON tmf.date_key = tpd.Date_key
-JOIN [dbo].[distributor_dim] dd ON dd.distributor_key = tmf.distributor_key
-WHERE dd.distributor_name = 'CARDINAL HEALTH'
-GROUP BY [Year]
-order by [year]
-
-select distinct buyer_county
-from buyer_dim
-order by buyer_county
-
-
-SELECT * FROM [time_period_dim]
+-- Insert real distributor data as changed address
+INSERT INTO distributor_DIM
+VALUES
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'PRICE CHOPPER OPERATING CO INC',	'501 DUANESBURG ROAD', 			 'SCHENECTADY',	'NY', '12306', 'SCHENECTADY',	'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'H D SMITH WHOLESALE DRUG CO',		'410 COMMERCE BLVD UNIT B', 	 'CARLSTADT',	'NJ', '7072',  'BERGEN',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'HENRY SCHEIN, INC',				'41 WEAVER ROAD',				 'DENVER',		'PA', '17517', 'LANCASTER', 	'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERICAN HEALTH SERVICE SALES',	'DBA MED-VET INTERNATIONAL', 	 'METTAWA',		'IL', '60045', 'LAKE',			'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ACTAVIS PHARMA INC.',				'605 TRI-STATE PARKWAY', 		 'GURNEE',		'IL', '60031', 'LAKE',			'20050716', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CALIGOR PHYSICIANS & HOSPITAL',	'DBA CALIGOR & ROANE BARKER', 	 'SPARKS',		'NV', '89434', 'WASHOE',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'RITE AID MID-ATLANTIC',			'CUSTOMER SUPPORT CENTER', 		 'ABERDEEN',	'MD', '21001', 'HARFORD',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MIDWEST VETERINARY SUPPLY INC',	'5374 MALY ROAD, RTE 1',		 'SUN PRAIRIE',	'WI', '53590', 'DANE',			'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'THE HARVARD DRUG GROUP-MI',		'FIRST VETERINARY SUPPLY', 		 'LIVONIA',		'MI', '48150', 'WAYNE',			'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'AMERISOURCEBERGEN DRUG CORP.',		'5100 JAINDL BLVD.', 			 'BETHLEHEM',	'PA', '18017', 'NORTHAMPTON',	'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'WALGREEN CO',						'15998 WALGREENS DRIVE', 		 'JUPITER',		'FL', '33478', 'PALM BEACH',	'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'LIFELINE PHARMACEUTICALS LLC',		'1301 NW 84 AVE', 				 'MIAMI',		'FL', '33126', 'MIAMI-DADE',	'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'ANDA PHARMACEUTICALS INC',			'6500 ADELAIDE COURT', 			 'GROVEPORT',	'OH', '43125', 'FRANKLIN',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON MEDICAL SURGICAL INC',	'16043 EL PRADO ROAD', 			 'CHINO',		'CA', '91708', 'SAN BERNARDINO','20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'BUTLER ANIMAL HEALTH SUPPLY',		'STOCKROOM 02', 				 'COLUMBUS',	'OH', '43204', 'FRANKLIN',		'20060216', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'TOP RX, INC.',						'2950 BROTHER BOULEVARD', 		 'BARTLETT',	'TN', '38133', 'SHELBY',		'20080624', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCGUFF COMPANY',					'3524 WEST LAKE CENTER DRIVE',	 'SANTA ANA', 	'CA', '92704', 'ORANGE',		'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'CARDINAL HEALTH',					'2840 ELM POINT INDUSTRIAL DR.', 'ST CHARLES',	'MO', '63301', 'SAINT CHARLES',	'20080211', 'Y'),
+(NEXT VALUE FOR distributor_key, 'DISTRIBUTOR', 'MCKESSON CORPORATION',				'DBA MCKESSON DRUG COMPANY', 	 'LANDOVER', 	'MD', '20785', 'PRINCE GEORGES','20060216', 'Y')
