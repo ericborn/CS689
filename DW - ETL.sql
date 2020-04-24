@@ -65,11 +65,11 @@ START WITH 10
 INCREMENT BY 1;
 
 -- DROP TABLE buyer_dim
-SELECT NEXT VALUE FOR buyer_key AS buyer_key, ar.BUYER_BUS_ACT AS 'buyer_type', ar.BUYER_NAME AS 'buyer_name', ar.BUYER_ADDRESS1 AS 'buyer_address', 
+SELECT NEXT VALUE FOR buyer_key AS buyer_key, ar.BUYER_DEA_NO AS 'buyer_dea_num', ar.BUYER_BUS_ACT AS 'buyer_type', ar.BUYER_NAME AS 'buyer_name', ar.BUYER_ADDRESS1 AS 'buyer_address', 
 ar.BUYER_CITY AS 'buyer_city', ar.BUYER_STATE AS 'buyer_state', ar.BUYER_ZIP AS 'buyer_zip', ar.BUYER_COUNTY AS 'buyer_county'
 --,1 AS 'current_row_indicator', '20040101' AS 'row_effective_date', '20991231' AS 'row_expiration_date'
 INTO buyer_dim
-FROM (SELECT DISTINCT BUYER_BUS_ACT, BUYER_NAME, BUYER_ADDRESS1, BUYER_CITY, BUYER_STATE, BUYER_ZIP, BUYER_COUNTY
+FROM (SELECT DISTINCT BUYER_DEA_NO, BUYER_BUS_ACT, BUYER_NAME, BUYER_ADDRESS1, BUYER_CITY, BUYER_STATE, BUYER_ZIP, BUYER_COUNTY
 	  FROM Opioids.dbo.arcos
 	  WHERE BUYER_STATE = 'MA') ar;
 	  
@@ -350,7 +350,7 @@ INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Dat
 INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND ar.REPORTER_ADDRESS1 = di.distributor_address
 INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
-WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0' AND REPORTER_DEA_NO = 'RA0290724'
+WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
 GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key
 
 SELECT TOP 100 transaction_Date
