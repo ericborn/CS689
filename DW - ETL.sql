@@ -1,8 +1,10 @@
+-- create a smaller arcos table based upon only records where the buying state was MA
 SELECT *
 INTO arcos
 FROM arcos_full
-WHERE BUYER_STATE = 'ma'
+WHERE BUYER_STATE = 'ma';
 
+USE Opioids_DW;
 -- DW Creation and ETL Code
 IF EXISTS 
    (
@@ -41,8 +43,6 @@ END;
 --current_row_indicator = 1,
 --row_effective_date = '20040101',
 --row_expiration_date = '20991231'
-
-USE Opioids_DW;
 
 -- Code to setup the distributor_dim table within the warehouse
 --DROP SEQUENCE distributor_key
@@ -109,7 +109,7 @@ county_pop_key INT,
 county_name VARCHAR(50),
 [year] INT,
 [population] INT
-)
+);
 
 INSERT INTO county_pop_dim
 VALUES
@@ -210,7 +210,7 @@ VALUES
 (NEXT VALUE FOR county_dim_key,	'WORCESTER',2010,800401),
 (NEXT VALUE FOR county_dim_key,	'WORCESTER',2011,804063),
 (NEXT VALUE FOR county_dim_key,	'WORCESTER',2012,806942),
-(NEXT VALUE FOR county_dim_key,	'WORCESTER',2013,810846)
+(NEXT VALUE FOR county_dim_key,	'WORCESTER',2013,810846);
 
 
 -- Created indexes to help with reading data from the arcos table
@@ -279,12 +279,12 @@ SET CALC_BASE_WT_IN_GM = 0
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 
 -- Insert fake distributor address changes
-INSERT INTO distributor_dim
-SELECT NEXT VALUE FOR distributor_key AS distributor_key,
-dd.distributor_type, dd.distributor_name, dau.distributor_address, 
-dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', '20080211', 'Y'
-FROM distributor_address dau
-JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key;
+--INSERT INTO distributor_dim
+--SELECT NEXT VALUE FOR distributor_key AS distributor_key,
+--dd.distributor_type, dd.distributor_name, dau.distributor_address, 
+--dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', '20080211', 'Y'
+--FROM distributor_address dau
+--JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key;
 
 -- set old records to not current
 UPDATE distributor_dim
@@ -340,18 +340,20 @@ USE Opioids_DW;
 -- filters distributors with current_flag set to Y
 -- Approx 25 seconds to build
 --DROP TABLE transactions_ma_fact
-SELECT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, COUNT(buyer_key) AS 'total_transactions', 
-ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_pill_quantity', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_pill_quantity',
-ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_doses', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_doses',
+SELECT DISTINCT t.date_key, di.distributor_key, b.buyer_key, dr.drug_key, COUNT(buyer_key) AS 'total_transactions', 
+ROUND(AVG(CAST(ar.quantity AS FLOAT)),3) AS 'average_boxes', SUM(CAST(ar.quantity AS FLOAT)) AS 'total_boxes',
+ROUND(AVG(CAST(ar.dosage_unit AS FLOAT)),3) AS 'average_pills', SUM(CAST(ar.dosage_unit AS FLOAT)) AS 'total_pills',
 ROUND(AVG(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'average_grams', ROUND(SUM(CAST(ar.CALC_BASE_WT_IN_GM AS FLOAT)),3) AS 'total_grams'
 INTO Opioids_DW.dbo.transactions_ma_fact
 FROM Opioids.dbo.arcos ar
 INNER JOIN Opioids_DW.dbo.time_period_dim t ON t.year = RIGHT(ar.transaction_Date,4) AND t.month = left(ar.transaction_Date,2) 
-INNER JOIN Opioids_DW.dbo.distributor_dim di ON di.distributor_name = ar.REPORTER_NAME AND ar.REPORTER_ADDRESS1 = di.distributor_address
-INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_name = ar.buyer_NAME AND b.buyer_address = ar.buyer_ADDRESS1
+INNER JOIN Opioids_DW.dbo.distributor_dim di ON ar.REPORTER_ADDRESS1 = di.distributor_address 
+AND ar.REPORTER_CITY = di.distributor_city AND ar.REPORTER_ZIP = di.distributor_zip
+INNER JOIN Opioids_DW.dbo.buyer_dim b ON b.buyer_address = ar.buyer_ADDRESS1 AND b.buyer_city = ar.BUYER_CITY
+AND b.buyer_zip = ar.BUYER_ZIP AND b.buyer_dea_num = ar.BUYER_DEA_NO
 INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
-WHERE b.buyer_state = 'MA' AND dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
-GROUP BY t.date_key, di.distributor_key, b.buyer_key, dr.drug_key
+WHERE dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
+GROUP BY t.date_key, dr.drug_key, di.distributor_key, b.buyer_key;
 
 SELECT TOP 100 transaction_Date
 FROM Opioids.dbo.arcos 
