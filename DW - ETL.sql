@@ -20,30 +20,6 @@ BEGIN
     SELECT 'Olist_DW database has been created'
 END;
 
---ALTER TABLE distributor_dim
---ADD
---current_row_indicator INT,
---row_effective_date DATE,
---row_expiration_date DATE;
-
---ALTER TABLE buyer_dim
---ADD
---current_row_indicator INT,
---row_effective_date DATE,
---row_expiration_date DATE;
-
---UPDATE distributor_dim
---SET 
---current_row_indicator = 1,
---row_effective_date = '20040101',
---row_expiration_date = '20991231'
-
---UPDATE buyer_dim
---SET 
---current_row_indicator = 1,
---row_effective_date = '20040101',
---row_expiration_date = '20991231'
-
 -- Code to setup the distributor_dim table within the warehouse
 --DROP SEQUENCE distributor_key
 CREATE SEQUENCE distributor_key
@@ -83,18 +59,6 @@ SELECT NEXT VALUE FOR drug_key AS drug_key, ar.DRUG_NAME AS 'drug_name'
 INTO drug_dim
 FROM (SELECT DISTINCT DRUG_NAME
 	  FROM Opioids.dbo.arcos) ar;
-
--- Code to setup the relabeler_dim table within the warehouse
---DROP SEQUENCE relabeler_dim_key
---CREATE SEQUENCE relabeler_key
---START WITH 1
---INCREMENT BY 1;
-
---SELECT NEXT VALUE FOR relabeler_key AS relabeler_key, 
---ar.combined_labeler_name AS 'relabeler_name'
---INTO relabeler_dim
---FROM (SELECT DISTINCT combined_labeler_name
---	  FROM Opioids.dbo.arcos) ar;
 
 -- Code to setup the county_dim table within the warehouse
 --DROP SEQUENCE county_dim_key
@@ -278,21 +242,6 @@ UPDATE Opioids.dbo.arcos
 SET CALC_BASE_WT_IN_GM = 0
 WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 
--- Insert fake distributor address changes
---INSERT INTO distributor_dim
---SELECT NEXT VALUE FOR distributor_key AS distributor_key,
---dd.distributor_type, dd.distributor_name, dau.distributor_address, 
---dau.distributor_city, dau.distributor_state, dau.distributor_zip, '', '20080211', 'Y'
---FROM distributor_address dau
---JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key;
-
----- set old records to not current
---UPDATE distributor_dim
---SET current_flag = 'N'
---FROM distributor_address dau
---JOIN distributor_dim dd ON dd.distributor_key = dau.distributor_key
---WHERE effective_date = '20040101'
-
 ---- update distributor county based on zipcode from uszips table
 ---- uszips table downloaded from here: https://simplemaps.com/data/us-zips
 --UPDATE distributor_dim
@@ -429,9 +378,14 @@ VALUES
 --where distributor_name = 'ACE SURGICAL SUPPLY CO INC' or
 -- distributor_name = 'BURLINGTON DRUG COMPANY'
 
--- Create fake data to insert into original opioids database to test ETL
--- !!!TODO!!! 
--- USE BUILD DATE TABLE WHILE LOOP TO BUILD THIS DATA WITH ITERATIVE DATES
+-- check max datekey within the fact table before putting any fake data in
+-- result is 84, december 2012
+SELECT *
+FROM [time_period_dim]
+WHERE DATE_KEY = (SELECT MAX(DATE_KEY)
+				  FROM transactions_ma_fact)
+
+-- Insert fake data for 2013 into original opioids database to test ETL
 INSERT INTO Opioids.dbo.arcos
 VALUES
 ('PA0006836','DISTRIBUTOR', 'ACE SURGICAL SUPPLY CO INC', 'NULL', '1034 PEARL STREET', 'NULL', 'BROCKTON', 'MA', '2301', 'PLYMOUTH', 'BT3484653', 'PRACTITIONER', 
@@ -513,3 +467,11 @@ VALUES
 'BROWNS REXALL DRUG', 'NULL', '214 WINTHROP STREET', 'NULL', 'WINTHROP', 'MA', '2152', 'SUFFOLK', 'S', '9193', '53746011201', 'HYDROCODONE', '2.0', 'null', 'null', 'null', 
 'null', 'null', '01232013', '86.064', '1200.0', '701007813', 'OXYCONTIN - 80MG OXYCODONE.HCL CONTR', 'OXYCODONE HYDROCHLORIDE', 'TAB', '1.5', 'Purdue Pharma LP', 
 'Par Pharmaceutical', 'Endo Pharmaceuticals, Inc.', '7.5')
+
+-- check max datekey within the fact table 
+-- result is 85
+-- 85 is January 2013
+SELECT *
+FROM [time_period_dim]
+WHERE DATE_KEY = (SELECT MAX(DATE_KEY)
+				  FROM transactions_ma_fact)
