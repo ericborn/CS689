@@ -250,22 +250,6 @@ WHERE dbo.isReallyNumeric(CALC_BASE_WT_IN_GM) = 0;
 --JOIN uszips u ON d.distributor_city = u.city AND d.distributor_state = u.state_name
 --WHERE d.distributor_county = '';
 
--- null value for a county with the zipcode of 02401, 02174, 10115
-UPDATE buyer_dim
-SET buyer_county = 'Plymouth'
-WHERE buyer_zip = 02401;
-
-UPDATE buyer_dim
-SET buyer_county = 'Middlesex'
-WHERE buyer_zip = 02174;
-
-UPDATE distributor_dim
-SET distributor_dim.distributor_county = 'New York'
-WHERE distributor_zip = 10115;
-
-SELECT * FROM BUYER_DIM
-WHERE BUYER_COUNTY = 'NULL'
-
 --DROP TABLE orders
 -- Gathers the initial data from the Opioids database and insert it into a table called transactions_fact in the Opioids_DW database
 -- does a convert on the time_period.date_key from INT to DATE
@@ -306,32 +290,51 @@ INNER JOIN Opioids_DW.dbo.drug_dim dr ON dr.drug_name = ar.drug_NAME
 WHERE dosage_unit != '999' AND quantity != '999' AND CALC_BASE_WT_IN_GM != '0'
 GROUP BY t.date_key, dr.drug_key, di.distributor_key, b.buyer_key;
 
-SELECT TOP 100 transaction_Date
-FROM Opioids.dbo.arcos 
+--SELECT TOP 100 transaction_Date
+--FROM Opioids.dbo.arcos 
 
-SELECT TOP 10 *
-FROM buyer_dim
+--SELECT TOP 10 *
+--FROM buyer_dim
 
-SELECT TOP 100 *
-FROM distributor_dim
+--SELECT TOP 100 *
+--FROM distributor_dim
 
-SELECT TOP 10 *
-FROM drug_dim
+--SELECT TOP 10 *
+--FROM drug_dim
 
-SELECT TOP 10 *
-FROM relabeler_dim
+--SELECT TOP 10 *
+--FROM relabeler_dim
 
-SELECT *
-FROM time_period_dim
+--SELECT *
+--FROM time_period_dim
 
-SELECT TOP 10 *
-FROM transactions_ma_fact
-order by date_key
+--SELECT TOP 10 *
+--FROM transactions_ma_fact
+--order by date_key
+
+--SELECT DISTINCT buyer_type FROM buyer_dim
 
 -- Convert PRACTITIONER buyer types from three sub category types into a single category
-UPDATE buyer_dim
-SET buyer_type = 'PRACTITIONER'
-WHERE buyer_type LIKE 'PRACTITIONER-%'
+-- Moved to SSIS package
+--UPDATE buyer_dim
+--SET buyer_type = 'PRACTITIONER'
+--WHERE buyer_type LIKE 'PRACTITIONER-%'
+
+-- null value for a county with the zipcode of 02401, 02174, 10115
+--UPDATE buyer_dim
+--SET buyer_county = 'Plymouth'
+--WHERE buyer_zip = 02401;
+
+--UPDATE buyer_dim
+--SET buyer_county = 'Middlesex'
+--WHERE buyer_zip = 02174;
+
+--UPDATE distributor_dim
+--SET distributor_dim.distributor_county = 'New York'
+--WHERE distributor_zip = 10115;
+
+--SELECT * FROM BUYER_DIM
+--WHERE BUYER_COUNTY = 'NULL'
 
 -----------------------------
 -- Update distributor data with fake addresses from address table
