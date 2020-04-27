@@ -1,3 +1,10 @@
+/*
+Eric Born
+25 April 2020
+CS 689 Final project
+ARCOS data warehouse
+*/
+
 -- create a smaller arcos table based upon only records where the buying state was MA
 SELECT *
 INTO arcos
@@ -75,6 +82,7 @@ county_name VARCHAR(50),
 [population] INT
 );
 
+-- populate the county populations over time
 INSERT INTO county_pop_dim
 VALUES
 (NEXT VALUE FOR county_dim_key, 'BRISTOL',2006,546353),
@@ -370,7 +378,7 @@ VALUES
 
 --Delete fake data from the opioids database
 --DELETE FROM Opioids.dbo.arcos
---WHERE RIGHT(transaction_Date,4) = 2015
+--WHERE RIGHT(transaction_Date,4) = 2013
 
 -- Delete fake data from fact table
 -- 85 is the date key for jan 1 2013
@@ -387,6 +395,10 @@ SELECT *
 FROM [time_period_dim]
 WHERE DATE_KEY = (SELECT MAX(DATE_KEY)
 				  FROM transactions_ma_fact)
+
+SELECT count(*)
+FROM Opioids.dbo.arcos
+WHERE RIGHT(TRANSACTION_DATE,4) = '2013'
 
 -- Insert fake data for 2013 into original opioids database to test ETL
 INSERT INTO Opioids.dbo.arcos
